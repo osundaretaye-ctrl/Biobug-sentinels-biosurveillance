@@ -1,0 +1,10 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# Node / Python / envs
+node_modules/
+venv/
+__pycache__/
+.env
+.env.local
