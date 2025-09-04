@@ -90,6 +90,35 @@
 
     /* Footer */
     .footer { margin-top: 40px; font-size: 14px; color: #555; }
+
+    /* AI boxes styling */
+    .ai-section {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 40px;
+    }
+    .ai-box {
+      flex: 1 1 300px;
+      text-align: center;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      background: #fff;
+    }
+    .ai-box button {
+      padding: 10px 20px;
+      border: none;
+      background: #0070f3;
+      color: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .ai-box button:hover {
+      background: #0056c7;
+    }
   </style>
 </head>
 <body>
@@ -164,20 +193,36 @@
       <h1>Prediction Boxes</h1>
       <p>AI model outputs will appear here.</p>
 
-      <div class="card">
-        <h2>ARIMA Prediction Example</h2>
-        <p>Placeholder for ARIMA prediction outputs.</p>
-      </div>
+      <!-- AI MODELS SECTION -->
+      <div class="ai-section">
 
-      <div class="card">
-        <h2>Random Forest Prediction Example</h2>
-        <p>Placeholder for Random Forest outputs.</p>
-      </div>
+        <!-- Forecast Box -->
+        <div class="ai-box">
+          <h3>📊 Forecast Antibiotic Usage</h3>
+          <button onclick="runForecast()">Run Forecast</button>
+          <p id="forecastResult"></p>
+        </div>
 
-      <div class="card">
-        <h2>NLP Prediction Example</h2>
-        <p>Placeholder for NLP processed outputs.</p>
+        <!-- Random Forest Box -->
+        <div class="ai-box">
+          <h3>🧪 High-Risk Prediction</h3>
+          <input id="rfInput" type="text" placeholder="e.g. 1,0,3,45" style="width:80%; padding:8px;"/>
+          <br><br>
+          <button onclick="runRF()">Predict</button>
+          <p id="rfResult"></p>
+        </div>
+
+        <!-- NLP Box -->
+        <div class="ai-box">
+          <h3>💬 Text → Medical Code</h3>
+          <textarea id="nlpInput" rows="3" placeholder="Type: fever, cough, amoxil" style="width:80%; padding:8px;"></textarea>
+          <br><br>
+          <button onclick="runNLP()">Translate</button>
+          <p id="nlpResult"></p>
+        </div>
+
       </div>
+      <!-- END AI MODELS SECTION -->
 
       <div class="footer">
         ⬅ Use nav bar to go back
@@ -188,118 +233,63 @@
   <!-- JavaScript -->
   <script>
     function showSection(sectionId) {
-      console.log("Switching to section:", sectionId);
       const sections = document.querySelectorAll('.section');
       sections.forEach(sec => sec.classList.remove('active'));
       const target = document.getElementById(sectionId);
       if(target) target.classList.add('active');
-      else console.error("Section not found:", sectionId);
     }
 
     window.onload = function() {
       showSection('home');
-      console.log("Page loaded, Home section active");
     };
+
+    // Forecast function
+    function runForecast() {
+      const pastValues = [10, 12, 11, 14, 15];
+      const horizon = 5;
+      const avg = pastValues.reduce((a, b) => a + b, 0) / pastValues.length;
+      const forecast = Array.from({ length: horizon }, () => avg.toFixed(2));
+      document.getElementById("forecastResult").innerText =
+        "Forecast for next " + horizon + " days: " + forecast.join(", ");
+    }
+
+    // Random Forest demo function
+    function runRF() {
+      const input = document.getElementById("rfInput").value.trim();
+      if (!input) {
+        document.getElementById("rfResult").innerText = "Please enter some numbers.";
+        return;
+      }
+      const features = input.split(",").map(x => parseFloat(x));
+      const score = features.reduce((a, b) => a + b, 0);
+      const label = score > 20 ? "HIGH RISK" : "LOW RISK";
+      document.getElementById("rfResult").innerText =
+        "Prediction: " + label + " (score=" + score + ")";
+    }
+
+    // NLP demo function
+    function runNLP() {
+      const input = document.getElementById("nlpInput").value.toLowerCase();
+      if (!input) {
+        document.getElementById("nlpResult").innerText = "Please enter some text.";
+        return;
+      }
+      const dictionary = {
+        "fever": "R50.9 (ICD-10)",
+        "cough": "R05 (ICD-10)",
+        "diarrhea": "A09 (ICD-10)",
+        "amoxil": "J01CA04 (ATC - Amoxicillin)",
+        "antibiotic": "J01 (ATC - General Antibiotic)"
+      };
+      let found = [];
+      for (const [key, code] of Object.entries(dictionary)) {
+        if (input.includes(key)) {
+          found.push(`${key} → ${code}`);
+        }
+      }
+      document.getElementById("nlpResult").innerText =
+        found.length ? found.join("; ") : "No known medical code found.";
+    }
   </script>
-  <style>
-  h3 {
-    text-align: center;
-    margin-top: 30px;
-  }
-  #forecastResult {
-    font-weight: bold;
-    text-align: center;
-    margin-top: 15px;
-  }
-  button {
-    display: block;
-    margin: 0 auto;
-    padding: 10px 20px;
-    border: none;
-    background: #0070f3;
-    color: #fff;
-    border-radius: 8px;
-    cursor: pointer;
-  }
-  </style>
-  <div style="text-align:center; margin-top:40px; padding:20px; border:1px solid #ccc; border-radius:12px; width:60%; max-width:500px; margin-left:auto; margin-right:auto; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
-  <h3 style="margin-bottom:15px;">🧪 High-Risk Prediction (Random Forest Demo)</h3>
-  <p>Enter features (comma separated):</p>
-  <input id="rfInput" type="text" placeholder="e.g. 1,0,3,45" style="width:80%; padding:8px;"/>
-  <br><br>
-  <button onclick="runRF()">Predict</button>
-  <p id="rfResult" style="margin-top:15px; font-weight:bold;"></p>
-</div>
-
-<script>
-  function runRF() {
-    // Get input values
-    const input = document.getElementById("rfInput").value.trim();
-    if (!input) {
-      document.getElementById("rfResult").innerText = "Please enter some numbers.";
-      return;
-    }
-
-    // Convert to numbers
-    const features = input.split(",").map(x => parseFloat(x));
-
-    // Demo rule-based "Random Forest" mimic (for hackathon demo)
-    // In real case, these would be learned from training data
-    const score = features.reduce((a, b) => a + b, 0); // simple sum
-    const label = score > 20 ? "HIGH RISK" : "LOW RISK";
-
-    document.getElementById("rfResult").innerText =
-      "Prediction: " + label + " (score=" + score + ")";
-  }
-</script>
-  <div style="text-align:center; margin-top:40px; padding:20px; border:1px solid #ccc; border-radius:12px; width:60%; max-width:500px; margin-left:auto; margin-right:auto; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
-  <h3 style="margin-bottom:15px;">🧪 High-Risk Prediction (Random Forest Demo)</h3>
-  <p>Enter features (comma separated):</p>
-  <input id="rfInput" type="text" placeholder="e.g. 1,0,3,45" style="width:80%; padding:8px;"/>
-  <br><br>
-  <button onclick="runRF()">Predict</button>
-  <p id="rfResult" style="margin-top:15px; font-weight:bold;"></p>
-</div>
-
-<script>
-  function runRF() {
-    // Get input values
-    const input = document.getElementById("rfInput").value.trim();
-    if (!input) {
-      document.getElementById("rfResult").innerText = "Please enter some numbers.";
-      return;
-    }
-
-    // Convert to numbers
-    const features = input.split(",").map(x => parseFloat(x));
-
-    // Demo rule-based "Random Forest" mimic (for hackathon demo)
-    // In real case, these would be learned from training data
-    const score = features.reduce((a, b) => a + b, 0); // simple sum
-    const label = score > 20 ? "HIGH RISK" : "LOW RISK";
-
-    document.getElementById("rfResult").innerText =
-      "Prediction: " + label + " (score=" + score + ")";
-  }
-</script>
 </body>
 </html>
-
-<h3>Forecast Antibiotic Usage</h3>
-<button onclick="runForecast()">Run Forecast</button>
-<p id="forecastResult"></p>
-
-<script>
-  function runForecast() {
-    // Example past values (replace later with real inputs)
-    const pastValues = [10, 12, 11, 14, 15];
-    const horizon = 5;
-
-    // Simple average forecast
-    const avg = pastValues.reduce((a, b) => a + b, 0) / pastValues.length;
-    const forecast = Array.from({ length: horizon }, () => avg.toFixed(2));
-
-    document.getElementById("forecastResult").innerText =
-      "Forecast for next " + horizon + " days: " + forecast.join(", ");
-  }
-</script>
