@@ -252,6 +252,36 @@
       "Prediction: " + label + " (score=" + score + ")";
   }
 </script>
+  <div style="text-align:center; margin-top:40px; padding:20px; border:1px solid #ccc; border-radius:12px; width:60%; max-width:500px; margin-left:auto; margin-right:auto; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+  <h3 style="margin-bottom:15px;">🧪 High-Risk Prediction (Random Forest Demo)</h3>
+  <p>Enter features (comma separated):</p>
+  <input id="rfInput" type="text" placeholder="e.g. 1,0,3,45" style="width:80%; padding:8px;"/>
+  <br><br>
+  <button onclick="runRF()">Predict</button>
+  <p id="rfResult" style="margin-top:15px; font-weight:bold;"></p>
+</div>
+
+<script>
+  function runRF() {
+    // Get input values
+    const input = document.getElementById("rfInput").value.trim();
+    if (!input) {
+      document.getElementById("rfResult").innerText = "Please enter some numbers.";
+      return;
+    }
+
+    // Convert to numbers
+    const features = input.split(",").map(x => parseFloat(x));
+
+    // Demo rule-based "Random Forest" mimic (for hackathon demo)
+    // In real case, these would be learned from training data
+    const score = features.reduce((a, b) => a + b, 0); // simple sum
+    const label = score > 20 ? "HIGH RISK" : "LOW RISK";
+
+    document.getElementById("rfResult").innerText =
+      "Prediction: " + label + " (score=" + score + ")";
+  }
+</script>
 </body>
 </html>
 
