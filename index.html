@@ -203,3 +203,22 @@
   </script>
 </body>
 </html>
+
+<h3>Forecast Antibiotic Usage</h3>
+<button onclick="runForecast()">Run Forecast</button>
+<p id="forecastResult"></p>
+
+<script>
+  function runForecast() {
+    // Example past values (replace later with real inputs)
+    const pastValues = [10, 12, 11, 14, 15];
+    const horizon = 5;
+
+    // Simple average forecast
+    const avg = pastValues.reduce((a, b) => a + b, 0) / pastValues.length;
+    const forecast = Array.from({ length: horizon }, () => avg.toFixed(2));
+
+    document.getElementById("forecastResult").innerText =
+      "Forecast for next " + horizon + " days: " + forecast.join(", ");
+  }
+</script>
